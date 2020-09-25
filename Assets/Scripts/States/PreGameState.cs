@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class PreGameState : MonoBase, IState
+public class PreGameState : MonoBehaviour, IState
 {
     [SerializeField] private GameObject _waitScreen;
     [SerializeField] private TextMeshProUGUI _waitText;
