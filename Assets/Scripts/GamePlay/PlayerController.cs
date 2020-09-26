@@ -7,14 +7,14 @@ using TMPro;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : MonoBehaviour
 {
-    const float _playerSpeed = 10f;
+    const float _playerSpeed = 5f;
     [SerializeField] private PlayerModel _playerModel;
     [SerializeField] private GameObject _healthBar;
     [SerializeField] private GameObject _scoreGmo;
     [SerializeField] private TextMeshProUGUI _scoreText;
     private Rigidbody rb;
+    private bool _isPaused;
 
-    private HeathBarController _heathBarController;
     private CallBack _dieCallBack;
 
     public void SetCallBack(CallBack callBack)
@@ -24,27 +24,42 @@ public class PlayerController : MonoBehaviour
 
     private void OnEnable()
     {
+        EventManager.DamageEventResult += ChangeHitPoint;
+        EventManager.ScoreEventResult += ChangeScore;
+        EventManager.PauseStateEvent += EventManager_PauseStateEvent;
+
         Reset();
         rb = GetComponent<Rigidbody>();
         _playerModel = new PlayerModel(100, GameManager.Instance.GetMaxScore());
         _healthBar.SetActive(true);
         _scoreGmo.SetActive(true);
-        _heathBarController = _healthBar.GetComponent<HeathBarController>();
-        HealthVisualator();
     }
 
     private void OnDisable()
     {
+        EventManager.DamageEventResult -= ChangeHitPoint;
+        EventManager.ScoreEventResult -= ChangeScore;
+        EventManager.PauseStateEvent -= EventManager_PauseStateEvent;
         _healthBar?.SetActive(false);
         _scoreGmo.SetActive(false);
         _dieCallBack = null;
     }
 
+    void EventManager_PauseStateEvent(bool isPaused)
+    {
+        _isPaused = isPaused;
+    }
+
+
     private void FixedUpdate()
     {
-        float moveHorizontal = Input.GetAxis("Horizontal");
-        Vector3 movement = new Vector3(moveHorizontal, 0, 0);
-        rb.velocity = movement * _playerSpeed;
+        if (!_isPaused)
+        {
+            float moveHorizontal = Input.GetAxis("Horizontal");
+            Vector3 movement = new Vector3(moveHorizontal, 0, 0);
+            rb.velocity = movement * _playerSpeed;
+        }
+  
 
     }
 
@@ -55,7 +70,6 @@ public class PlayerController : MonoBehaviour
         {
             Die();
         }
-        HealthVisualator();
     }
 
     public void ChangeScore(int score)
@@ -75,11 +89,6 @@ public class PlayerController : MonoBehaviour
         var gameManager = GameManager.Instance;
         gameManager.SetMaxScore(_playerModel.GetScore());
         gameManager.SetState(StateType.PreGameState);
-    }
-
-    private void HealthVisualator()
-    {
-        _heathBarController.UpdateSliderValue(_playerModel.GetHitPoint());
     }
 
     public void Reset()

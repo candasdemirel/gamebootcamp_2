@@ -16,13 +16,28 @@ public class DropController : MonoBehaviour
     {
         isGameState = true;
         gameValues = GameValues.Instance;
+        EventManager.PauseStateEvent += EventManager_PauseEvent;
         _dropCoroutine = StartCoroutine(SpawnDrop(gameValues.dropPeriod));
     }
 
     private void OnDisable()
     {
+        EventManager.PauseStateEvent -= EventManager_PauseEvent;
         isGameState = false;
         StopCoroutine(_dropCoroutine);
+    }
+
+    void EventManager_PauseEvent(bool isPaused)
+    {
+        if (isPaused)
+        {
+            StopCoroutine(_dropCoroutine);
+        }
+        else
+        {
+            _dropCoroutine = StartCoroutine(SpawnDrop(gameValues.dropPeriod));
+        }
+
     }
 
 

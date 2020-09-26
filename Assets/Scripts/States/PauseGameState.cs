@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,13 +13,13 @@ public class PauseGameState : MonoBehaviour , IState
         _pauseScreen.SetActive(true);
         resumeButton = _pauseScreen.GetComponentInChildren<Button>();
         resumeButton.onClick.AddListener(HandlePauseButton);
-        Time.timeScale = 0f;
+        EventManager.TriggerPauseStateEvent(true);
     }
 
     public void Exit()
     {
         _pauseScreen.SetActive(false);
-        Time.timeScale = 1f;
+        EventManager.TriggerPauseStateEvent(false);
     }
 
 
