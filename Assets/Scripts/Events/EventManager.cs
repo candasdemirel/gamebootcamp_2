@@ -28,6 +28,7 @@ public static class EventManager
         HPChangeEventResult?.Invoke(hp);
     }
 
+
     public delegate void PauseEvent(bool isPaused);
 
     public static event PauseEvent PauseStateEvent;

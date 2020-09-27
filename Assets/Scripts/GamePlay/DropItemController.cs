@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class DropItemController : MonoBehaviour , IReset
+public class DropItemController : MonoBehaviour , IReset, ISubject
 {
     [SerializeField] DropItemModel behaviour;
 
@@ -13,11 +13,13 @@ public class DropItemController : MonoBehaviour , IReset
 
     private void OnEnable()
     {
+       // PauseGameState.Subscribe(this, this.gameObject);
         EventManager.PauseStateEvent += EventManager_PauseStateEvent;
     }
 
     private void OnDisable()
     {
+        //PauseGameState.Unsubscribe(this, this.gameObject);
         EventManager.PauseStateEvent -= EventManager_PauseStateEvent;
     }
 
@@ -36,7 +38,31 @@ public class DropItemController : MonoBehaviour , IReset
         }
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "SafeArea")
+        {
+            return;
+        }
 
+        if (other.gameObject.tag == "Player")
+        {
+            if (behaviour is DamageObject damageObject)
+            {
+                EventManager.TriggerDamageEventResult(_damage);
+            }
+            else if (behaviour is ScoreObject scoreObject)
+            {
+                EventManager.TriggerScoreEventResult(_score);
+            }
+
+        }
+       
+        Reset();
+        ObjectPooler.Instance.PoolDestroy(behaviour.dropType, this.gameObject);
+    }
+
+    /*
     private void OnCollisionEnter(Collision collision)
     {
         if(collision.gameObject.tag == "Player")
@@ -54,7 +80,7 @@ public class DropItemController : MonoBehaviour , IReset
 
         Reset();
         ObjectPooler.Instance.PoolDestroy(behaviour.dropType , this.gameObject);
-    }
+    }*/
 
     private void OnTriggerExit(Collider other)
     {
@@ -87,6 +113,23 @@ public class DropItemController : MonoBehaviour , IReset
     {
         _rigidbody.velocity = Vector3.zero;
         _rigidbody.angularVelocity = Vector3.zero;
+    }
+
+    public void Notify(bool isPaused)
+    {
+        if (isPaused)
+        {
+            _velocity = _rigidbody.velocity;
+            _angularVelocity = _rigidbody.angularVelocity;
+            _rigidbody.useGravity = false;
+            Reset();
+        }
+        else
+        {
+            _rigidbody.velocity = _velocity;
+            _rigidbody.angularVelocity = _angularVelocity;
+            _rigidbody.useGravity = true;
+        }
     }
 }
 

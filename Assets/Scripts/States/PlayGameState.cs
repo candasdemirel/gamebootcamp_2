@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayGameState : MonoBehaviour, IState
@@ -17,11 +15,11 @@ public class PlayGameState : MonoBehaviour, IState
         {
             Debug.LogError("PlayerController yok");
         }
-
         if (!_dropController)
         {
             Debug.LogError("DropController yok");
         }
+
         _pauseButtonGMO.SetActive(true);
         _pauseButton = _pauseButtonGMO.GetComponentInChildren<Button>();
         _pauseButton.onClick.AddListener(HandlePauseButton);
