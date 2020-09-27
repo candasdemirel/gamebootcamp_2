@@ -16,9 +16,23 @@ public class HeathBarController : MonoBehaviour
         _slider = GetComponent<Slider>();
     }
 
+    private void OnEnable()
+    {   
+        EventManager.HPChangeEventResult += UpdateSliderValue;
+    }
+
+    private void OnDisable()
+    {
+        EventManager.HPChangeEventResult -= UpdateSliderValue;
+    }
+
+
     public void UpdateSliderValue(int hp)
     {
         healthText.text = hp.ToString();
         _slider.value = (float)hp / 100;
     }
+
+
+
 }

@@ -11,6 +11,7 @@ public class PlayerModel
     {
         _maxHitPoint = maxHitPoint;
         _hitPoint = maxHitPoint;
+        EventManager.TriggerHPChangeEventResult(_hitPoint);
     }
 
     public int GetHitPoint()
@@ -40,6 +41,8 @@ public class PlayerModel
                 }
             }
         }
+
+        EventManager.TriggerHPChangeEventResult(_hitPoint);
     }
 
     public int GetScore()

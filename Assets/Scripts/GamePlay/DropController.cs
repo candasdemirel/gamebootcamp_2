@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DropController : MonoBehaviour
+public class DropController : MonoBehaviour 
 {
 
     [SerializeField] private PoolObjectType[] _dropGameObjects;
@@ -16,13 +16,31 @@ public class DropController : MonoBehaviour
     {
         isGameState = true;
         gameValues = GameValues.Instance;
+        EventManager.PauseStateEvent += EventManager_PauseEvent;
+        //PauseGameState.Subscribe(this, this.gameObject);
         _dropCoroutine = StartCoroutine(SpawnDrop(gameValues.dropPeriod));
     }
 
     private void OnDisable()
     {
+        //PauseGameState.Unsubscribe(this, this.gameObject);
+        EventManager.PauseStateEvent -= EventManager_PauseEvent;
         isGameState = false;
         StopCoroutine(_dropCoroutine);
+    }
+
+
+    void EventManager_PauseEvent(bool isPaused)
+    {
+        if (isPaused)
+        {
+            StopCoroutine(_dropCoroutine);
+        }
+        else
+        {
+            _dropCoroutine = StartCoroutine(SpawnDrop(gameValues.dropPeriod));
+        }
+
     }
 
 
@@ -37,8 +55,6 @@ public class DropController : MonoBehaviour
             //Instantiate(_dropGameObjects[Random.Range(0, _dropGameObjects.Length)],GetRandomSpawnPosition(), Quaternion.identity);
             ObjectPooler.Instance.SpawnFromPool(_dropGameObjects[Random.Range(0, _dropGameObjects.Length)], GetRandomSpawnPosition(), Quaternion.identity);
             yield return wait;
-
-          
         }
     }
 
@@ -48,4 +64,16 @@ public class DropController : MonoBehaviour
     }
 
 
+    /*
+    public void Notify(bool isPaused)
+    {
+        if (isPaused)
+        {
+            StopCoroutine(_dropCoroutine);
+        }
+        else
+        {
+            _dropCoroutine = StartCoroutine(SpawnDrop(gameValues.dropPeriod));
+        }
+    }*/
 }

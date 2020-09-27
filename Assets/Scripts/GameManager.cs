@@ -6,8 +6,6 @@ using UnityEngine;
 public class GameManager : Singleton<GameManager>
 {
 
-    //diğer managerların kaydını tutsun
-
     [SerializeField]
     private List<State> _gameStates = new List<State>();
 
@@ -36,6 +34,7 @@ public class GameManager : Singleton<GameManager>
     {
         return _currentState;
     }
+
     #endregion
     #region Managers
     public void SetSaveManager(SaveManager saveManager)
