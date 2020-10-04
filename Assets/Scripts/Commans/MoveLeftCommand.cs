@@ -6,6 +6,7 @@ public class MoveLeftCommand : ICommand
     Rigidbody _rb;
     float _lag;
 
+
     public MoveLeftCommand(Rigidbody rb, float speed, float lag)
     {
         _rb = rb;
@@ -27,4 +28,5 @@ public class MoveLeftCommand : ICommand
     {
         _rb.position = _rb.position + new Vector3(_speed, 0, 0);
     }
+
 }

@@ -1,14 +1,17 @@
 ﻿
 public static class EventManager
 {
+    //Damage event
     public delegate void DamgeEvent(int damage);
 
     public static event DamgeEvent DamageEventResult;
 
+    //Damage event Trigger
     public static void TriggerDamageEventResult(int damage)
     {
         DamageEventResult?.Invoke(damage);
     }
+
 
     public delegate void ScoreEvent(int score);
 
